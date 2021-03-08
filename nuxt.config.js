@@ -7,9 +7,9 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: 'infocei',
+    title: 'InfoCEI',
     htmlAttrs: {
-      lang: 'en'
+      lang: 'pt-BR'
     },
     meta: [
       { charset: 'utf-8' },
@@ -27,6 +27,9 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/filters',
+    '~/plugins/indexedDB/index',
+    '~/plugins/xlsx/index',
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
