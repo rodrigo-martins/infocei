@@ -1,10 +1,16 @@
 <template>
   <b-container fluid>
-    <b-tabs pills card vertical>
-      <b-tab v-for="mes in meses" :key="mes" :title="mes" active>
+    <b-row>
+      <b-col cols="1">
+        <b-button-group vertical class="mt-3">
+          <b-button block v-for="mes in meses" :key="mes">{{ mes }}</b-button>
+        </b-button-group>
+      </b-col>
+      <b-col>
         <TablesOperacoes />
-      </b-tab>
-    </b-tabs>
+      </b-col>
+    </b-row>
+    <b-tabs pills card vertical> </b-tabs>
   </b-container>
 </template>
 <script>
