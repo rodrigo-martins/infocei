@@ -52,7 +52,7 @@ export default {
             valores: 0,
           },
           {
-            consolidado: "IR fonte (Lei nº 11.033/2004) nos mêses anteriores",
+            consolidado: "IR fonte (Lei nº 11.033/2004) nos meses anteriores",
             valores: 0,
           },
           {

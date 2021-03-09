@@ -2,7 +2,7 @@
   <b-container fluid>
     <b-row>
       <b-col cols="1">
-        <b-button-group vertical class="mt-3">
+        <b-button-group vertical class="mt-3 w-100">
           <b-button block v-for="mes in meses" :key="mes">{{ mes }}</b-button>
         </b-button-group>
       </b-col>
