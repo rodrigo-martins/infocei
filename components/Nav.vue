@@ -11,7 +11,6 @@
       </b-navbar-brand>
 
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
-
       <b-collapse id="nav-collapse" is-nav>
         <b-navbar-nav>
           <b-nav-item-dropdown text="Renda Variável">
@@ -26,6 +25,9 @@
           </b-nav-item-dropdown>
         </b-navbar-nav>
       </b-collapse>
+      <b-navbar-nav class="ml-auto">
+        <b-nav-item to="/configuracoes">Configurações</b-nav-item>
+      </b-navbar-nav>
     </b-navbar>
   </div>
 </template>
