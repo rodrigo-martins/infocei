@@ -37,6 +37,7 @@ export default async (context, inject) => {
       })
       .map(row=>{
         return {
+          key: parse_date(row["key"]),
           data_negocio: parse_date(row["Data Negócio"]),
           compra_venda:	row["C/V"].trim(),
           mercado: row["Mercado"].trim(),

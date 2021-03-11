@@ -11,7 +11,7 @@ export default class CRUD {
 
   async _wrapRequest(request){
     return new Promise(function(resolve,reject){
-      request.onsuccess = event =>  resolve(event.target.result);
+      request.onsuccess = event => resolve(event.target.result);
       request.onerror = event => reject(event)
     });
   }
@@ -23,7 +23,12 @@ export default class CRUD {
 
   async getAll() {
     const transaction = this._transaction()
-    return await this._wrapRequest(transaction.getAll())
+    let values = await this._wrapRequest(transaction.getAll())
+    let keys = await this._wrapRequest(transaction.getAllKeys())
+    return values.map((value, index)=> {
+      value.key = keys[index]
+      return value
+    })
   }
 
   async add(data) {
