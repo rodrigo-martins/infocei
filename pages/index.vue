@@ -19,10 +19,18 @@ export default {
         let quantidade;
         let preco;
         let lucro_prejuizo;
+        if (operacao.key == 11) {
+          var a = 1;
+        }
         if (portifolio.quantidade == 0) {
-          quantidade = operacao.quantidade;
+          if (operacao.compra_venda == "C") {
+            quantidade = operacao.quantidade;
+            lucro_prejuizo = 0;
+          } else {
+            quantidade = operacao.quantidade ? -operacao.quantidade : 0;
+            lucro_prejuizo = operacao.quantidade * operacao.preco;
+          }
           preco = operacao.preco;
-          lucro_prejuizo = 0;
         } else if (portifolio.quantidade > 0 && operacao.compra_venda == "V") {
           quantidade = portifolio.quantidade - operacao.quantidade;
           preco = portifolio.preco;
@@ -32,6 +40,15 @@ export default {
             portifolio.lucro_prejuizo +
             operacao.preco * operacao.quantidade -
             portifolio.preco * operacao.quantidade;
+
+          // Comprado para Vendido
+          if (quantidade < 0) {
+            preco = operacao.preco;
+            lucro_prejuizo =
+              portifolio.lucro_prejuizo +
+              operacao.preco * operacao.quantidade -
+              portifolio.preco * portifolio.quantidade;
+          }
         } else if (portifolio.quantidade > 0 && operacao.compra_venda == "C") {
           quantidade = portifolio.quantidade + operacao.quantidade;
           preco =
@@ -42,23 +59,31 @@ export default {
         } else if (portifolio.quantidade < 0 && operacao.compra_venda == "V") {
           quantidade = portifolio.quantidade - operacao.quantidade;
           preco =
-            (portifolio.preco * portifolio.quantidade +
+            (portifolio.preco * -portifolio.quantidade +
               operacao.preco * operacao.quantidade) /
-            (portifolio.quantidade + operacao.quantidade);
-          lucro_prejuizo = portifolio.lucro_prejuizo;
+            (-portifolio.quantidade + operacao.quantidade);
+          lucro_prejuizo =
+            portifolio.lucro_prejuizo + operacao.quantidade * operacao.preco;
         } else if (portifolio.quantidade < 0 && operacao.compra_venda == "C") {
           quantidade = portifolio.quantidade + operacao.quantidade;
           preco = portifolio.preco;
           //Posição Zerada
           if (!quantidade) preco = 0;
           lucro_prejuizo =
-            portifolio.lucro_prejuizo -
-            operacao.preco * operacao.quantidade -
-            portifolio.preco * operacao.quantidade;
+            portifolio.lucro_prejuizo - operacao.preco * operacao.quantidade;
+
+          // Vendido para Comprado
+          if (quantidade > 0) {
+            lucro_prejuizo = 0;
+          }
         }
 
         _portifolio = { quantidade, preco, lucro_prejuizo };
 
+        return { _portifolio, _operacao };
+      }
+
+      function outra() {
         // if (
         //   new Date(portifolio_do_dia.data_negocio).getTime() !=
         //   new Date(operacao.data_negocio).getTime()
@@ -66,22 +91,17 @@ export default {
         //   let quantidade =
         //     operacao.compra_venda == "C" ? operacao.quantidade : -operacao.quantidade;
         //   quantidade = portifolio.quantidade + quantidade;
-
         //   let preco =
         //     (portifolio.preco * portifolio.quantidade +
         //       operacao.preco * operacao.quantidade) /
         //     (portifolio.quantidade + operacao.quantidade);
-
         //   let lucro_prejuizo =
         //     operacao.preco * operacao.quantidade - portifolio.preco * operacao.quantidade;
-
         //   _portifolio = { quantidade, preco, lucro_prejuizo };
-
         //   _operacao = {
         //     operacao: "Comum",
         //     lucro_prejuizo,
         //   };
-
         //   _portifolio_do_dia = {
         //     data_negocio: operacao.data_negocio,
         //     quantidade,
@@ -92,14 +112,11 @@ export default {
         //   let quantidade =
         //     operacao.compra_venda == "C" ? operacao.quantidade : -operacao.quantidade;
         //   quantidade = portifolio.quantidade + quantidade;
-
         //   _portifolio = { quantidade, preco, lucro_prejuizo };
-
         //   _operacao = {
         //     operacao: "Comum",
         //     lucro_prejuizo,
         //   };
-
         //   _portifolio_do_dia = {
         //     data_negocio: operacao.data_negocio,
         //     quantidade,
@@ -107,8 +124,6 @@ export default {
         //     lucro_prejuizo,
         //   };
         // }
-
-        return { _portifolio, _operacao };
       }
 
       operacoes.forEach((operacao) => {
