@@ -16,13 +16,11 @@ export default {
         let _portifolio = {};
         let _operacao = {};
 
-        let quantidade =
-          operacao.compra_venda == "V" ? -operacao.quantidade : operacao.quantidade;
+        let quantidade;
         let preco;
         let lucro_prejuizo;
         if (portifolio.quantidade == 0) {
-          quantidade =
-            operacao.compra_venda == "V" ? -operacao.quantidade : operacao.quantidade;
+          quantidade = operacao.quantidade;
           preco = operacao.preco;
           lucro_prejuizo = 0;
         } else if (portifolio.quantidade > 0 && operacao.compra_venda == "V") {
