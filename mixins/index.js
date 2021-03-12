@@ -9,8 +9,6 @@ export default {
       let result = {};
 
       function fnPortifolio(portifolio, operacao) {
-        let _portifolio = {};
-        let _operacao = {};
 
         let quantidade;
         let preco;
@@ -72,53 +70,39 @@ export default {
           }
         }
 
-        _portifolio = { quantidade, preco, lucro_prejuizo };
-
-        return { _portifolio, _operacao };
+        return { quantidade, preco, lucro_prejuizo };
       }
 
-      function outra() {
-        // if (
-        //   new Date(portifolio_do_dia.data_negocio).getTime() !=
-        //   new Date(operacao.data_negocio).getTime()
-        // ) {
-        //   let quantidade =
-        //     operacao.compra_venda == "C" ? operacao.quantidade : -operacao.quantidade;
-        //   quantidade = portifolio.quantidade + quantidade;
-        //   let preco =
-        //     (portifolio.preco * portifolio.quantidade +
-        //       operacao.preco * operacao.quantidade) /
-        //     (portifolio.quantidade + operacao.quantidade);
-        //   let lucro_prejuizo =
-        //     operacao.preco * operacao.quantidade - portifolio.preco * operacao.quantidade;
-        //   _portifolio = { quantidade, preco, lucro_prejuizo };
-        //   _operacao = {
-        //     operacao: "Comum",
-        //     lucro_prejuizo,
-        //   };
-        //   _portifolio_do_dia = {
-        //     data_negocio: operacao.data_negocio,
-        //     quantidade,
-        //     preco,
-        //     lucro_prejuizo,
-        //   };
-        // } else {
-        //   let quantidade =
-        //     operacao.compra_venda == "C" ? operacao.quantidade : -operacao.quantidade;
-        //   quantidade = portifolio.quantidade + quantidade;
-        //   _portifolio = { quantidade, preco, lucro_prejuizo };
-        //   _operacao = {
-        //     operacao: "Comum",
-        //     lucro_prejuizo,
-        //   };
-        //   _portifolio_do_dia = {
-        //     data_negocio: operacao.data_negocio,
-        //     quantidade,
-        //     preco,
-        //     lucro_prejuizo,
-        //   };
-        // }
+      function fnOperacoes(ultima_data_negocio, portifolio, operacao) {
+        let _operacao = "Comum"
+        let _lucro_prejuizo = 0
+        ultima_data_negocio = new Date(ultima_data_negocio).getTime()
+        let data_negocio = new Date(operacao.data_negocio).getTime()
+
+        if(data_negocio == ultima_data_negocio){
+          if(portifolio.quantidade > 0 && operacao.compra_venda == "C"){
+            _operacao = "Comum"
+            _lucro_prejuizo = 0
+          }else if (portifolio.quantidade > 0 && operacao.compra_venda == "V" ){
+            _operacao = "Day-Trade",
+            _lucro_prejuizo = operacao.valor_total - portifolio.preco * operacao.quantidade
+          }
+        }else{
+          if(portifolio.quantidade > 0 && operacao.compra_venda == "C"){
+            _operacao = "Comum"
+            _lucro_prejuizo = 0
+          }else if(portifolio.quantidade > 0 && operacao.compra_venda == "V"){
+            _operacao = "Comum"
+            _lucro_prejuizo = operacao.valor_total - portifolio.preco * operacao.quantidade
+          }
+        }
+
+        return {
+          operacao: _operacao,
+          lucro_prejuizo: _lucro_prejuizo
+        }
       }
+
 
       operacoes.forEach((operacao) => {
         if (!result[operacao.codigo]) {
@@ -131,26 +115,23 @@ export default {
             operacoes: {
               [operacao.key]: {},
             },
-            portifolio_do_dia: {
-              //id: 12,
-              data_negocio: null,
-              quantidade: 0,
-              preco: 0,
-              lucro_prejuizo: 0,
-              //compra_venda: "C",
-              //quantidade: 200,
-              //preco_medio: 23,
-            },
+            ultima_data_negocio: null
           };
         }
 
-        let { _portifolio, _operacao } = fnPortifolio(
+        result[operacao.codigo].operacoes[operacao.key] = fnOperacoes(
+          result[operacao.codigo].ultima_data_negocio,
+          result[operacao.codigo].portifolio,
+          operacao,
+        );
+
+        result[operacao.codigo].portifolio = fnPortifolio(
           result[operacao.codigo].portifolio,
           operacao
         );
 
-        result[operacao.codigo].portifolio = _portifolio;
-        result[operacao.codigo].operacoes[operacao.key] = _operacao;
+        result[operacao.codigo].ultima_data_negocio = operacao.data_negocio
+
         // result[operacao.codigo].portifolio_do_dia = _portifolio_do_dia;
       });
       return result;

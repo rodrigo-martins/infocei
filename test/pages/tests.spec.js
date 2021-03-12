@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import mixins from '@/pages/tests/mixins.vue'
 import db from '@/mock/db'
 
-describe('Calculos Portifólio - Comprado', () => {
+describe.skip('Calculos Portifólio - Comprado', () => {
   test('Vue instance',() => {
     const wrapper = mount(mixins)
     expect(wrapper.vm).toBeTruthy()
@@ -146,7 +146,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 })
 
-describe('Calculos Portifólio - Vendido', () => {
+describe.skip('Calculos Portifólio - Vendido', () => {
   test('Verifica venda Comum - Primeira', async() => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,10)
@@ -253,7 +253,7 @@ describe('Calculos Portifólio - Vendido', () => {
     })
   })
 })
-describe('Calculos Portifólio - Comprado vs Vendido', () => {
+describe.skip('Calculos Portifólio - Comprado vs Vendido', () => {
   test('Verifica compra Comum - Primeira', async() => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,19)
@@ -303,6 +303,67 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
       quantidade: 0,
       preco: 0,
       lucro_prejuizo: 300
+    })
+  })
+})
+
+describe('Tipo e resultado da operação', () => {
+  const wrapper = mount(mixins)
+  test('Verifica compra Comum - Primeira', async() => {
+    const operacoes = db.operacoes.slice(0,1)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"]).toHaveProperty("operacoes")
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("1",{
+      operacao: "Comum",
+      lucro_prejuizo: 0
+    })
+  })
+  test('Verifica venda Day-Trade - Lucro', async() => {
+    const operacoes = db.operacoes.slice(0,2)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("2",{
+      operacao: "Day-Trade",
+      lucro_prejuizo: 100
+    })
+  })
+  test('Verifica venda Comum - Prejuizo', async() => {
+    const operacoes = db.operacoes.slice(0,3)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("3",{
+      operacao: "Comum",
+      lucro_prejuizo: -50
+    })
+  })
+  test('Verifica compra Comum', async() => {
+    const operacoes = db.operacoes.slice(0,4)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("4",{
+      operacao: "Comum",
+      lucro_prejuizo: 0
+    })
+  })
+  test('Verifica compra Comum', async() => {
+    const operacoes = db.operacoes.slice(0,5)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("5",{
+      operacao: "Comum",
+      lucro_prejuizo: 0
+    })
+  })
+  test('Verifica venda Day-Trade - Lucro', async() => {
+    const operacoes = db.operacoes.slice(0,6)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("6",{
+      operacao: "Day-Trade",
+      lucro_prejuizo: 20
+    })
+  })
+  test('Verifica venda Comum - Lucro - Zerar posição', async() => {
+    const operacoes = db.operacoes.slice(0,7)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("7",{
+      operacao: "Comum",
+      lucro_prejuizo: 480
     })
   })
 })
