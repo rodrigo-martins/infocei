@@ -1,16 +1,15 @@
 import { mount } from '@vue/test-utils'
-import Index from '@/pages/index.vue'
+import mixins from '@/pages/tests/mixins.vue'
 import db from '@/mock/db'
-import { ListGroupPlugin } from 'bootstrap-vue'
 
 describe('Calculos Portifólio - Comprado', () => {
   test('Vue instance',() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     expect(wrapper.vm).toBeTruthy()
   })
 
   test('Verifica compra Comum - primeira', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,1)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos).toHaveProperty("KLBN11")
@@ -33,7 +32,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica venda Day-Trade', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,2)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(2)
@@ -55,7 +54,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica venda Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,3)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(3)
@@ -72,7 +71,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica compra Comum - dia seguinte', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,4)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(4)
@@ -88,7 +87,7 @@ describe('Calculos Portifólio - Comprado', () => {
     // })
   })
   test('Verifica compra Comum - no mesmo dia', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,5)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(5)
@@ -99,7 +98,7 @@ describe('Calculos Portifólio - Comprado', () => {
     })
   })
   test('Verifica venda Day-Trade', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,6)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(6)
@@ -111,7 +110,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica venda Comum - Zerar posição', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,7)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(7)
@@ -123,7 +122,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica compra Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,8)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(8)
@@ -135,7 +134,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 
   test('Verifica venda Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,9)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(9)
@@ -149,7 +148,7 @@ describe('Calculos Portifólio - Comprado', () => {
 
 describe('Calculos Portifólio - Vendido', () => {
   test('Verifica venda Comum - Primeira', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,10)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos).toHaveProperty("KLBN11")
@@ -161,7 +160,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica compra Day-Trade', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,11)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(11)
@@ -173,7 +172,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica compra Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,12)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(12)
@@ -185,7 +184,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica venda Comum - dia seguinte', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,13)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(13)
@@ -196,7 +195,7 @@ describe('Calculos Portifólio - Vendido', () => {
     })
   })
   test('Verifica venda Comum - no mesmo dia', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,14)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(14)
@@ -207,7 +206,7 @@ describe('Calculos Portifólio - Vendido', () => {
     })
   })
   test('Verifica compra Day-Trade', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,15)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(15)
@@ -219,7 +218,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica compra Comum - Zerar posição', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,16)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(16)
@@ -231,7 +230,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica venda Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,17)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(17)
@@ -243,7 +242,7 @@ describe('Calculos Portifólio - Vendido', () => {
   })
 
   test('Verifica compra Comum', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,18)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(Object.keys(calculos["KLBN11"].operacoes)).toHaveLength(18)
@@ -256,7 +255,7 @@ describe('Calculos Portifólio - Vendido', () => {
 })
 describe('Calculos Portifólio - Comprado vs Vendido', () => {
   test('Verifica compra Comum - Primeira', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,19)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
@@ -267,7 +266,7 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
   })
 
   test('Verifica venda Comum - Passando para Vendido', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,20)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
@@ -277,7 +276,7 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
     })
   })
   test('Verifica compra Comum - Passando para Comprado', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,21)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
@@ -287,7 +286,7 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
     })
   })
   test('Verifica venda Comum - Passando para Vendido com lucro', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,22)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
@@ -297,7 +296,7 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
     })
   })
   test('Verifica compra Comum - Zerando com lucro', async() => {
-    const wrapper = mount(Index)
+    const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0,23)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos["KLBN11"]).toHaveProperty("portifolio", {

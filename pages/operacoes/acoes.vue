@@ -1,5 +1,10 @@
 <template>
   <b-container fluid>
+    <b-row class="my-4">
+      <b-col>
+        <h3>Operações Comuns / Day-Trade</h3>
+      </b-col>
+    </b-row>
     <b-row>
       <b-col cols="1">
         <b-button-group vertical class="mt-3 w-100">

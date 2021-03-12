@@ -1,3 +1,9 @@
 <template>
-  <p>Imob.</p>
+  <b-container fluid>
+    <b-row class="my-4">
+      <b-col>
+        <h3>Operações Comuns Fund Invest. Imob.</h3>
+      </b-col>
+    </b-row>
+  </b-container>
 </template>

@@ -10,6 +10,7 @@
         InfoCEI
       </b-navbar-brand>
       <b-navbar-nav class="ml-auto">
+        <b-nav-item to="/portifolio">Portifólio</b-nav-item>
         <b-nav-item to="/operacoes">Operações</b-nav-item>
       </b-navbar-nav>
       <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
