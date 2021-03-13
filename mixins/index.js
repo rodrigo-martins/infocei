@@ -134,8 +134,6 @@ export default {
           lucro_prejuizo: _lucro_prejuizo != 0 ? _lucro_prejuizo : 0
         }
       }
-
-
       operacoes.forEach((operacao) => {
         if (!result[operacao.codigo]) {
           result[operacao.codigo] = {

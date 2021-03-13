@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import mixins from '@/pages/tests/mixins.vue'
 import db from '@/mock/db'
 
-describe.skip('Calculos Portifólio - Comprado', () => {
+describe('Calculos Portifólio - Comprado', () => {
   test('Vue instance', () => {
     const wrapper = mount(mixins)
     expect(wrapper.vm).toBeTruthy()
@@ -146,7 +146,7 @@ describe.skip('Calculos Portifólio - Comprado', () => {
   })
 })
 
-describe.skip('Calculos Portifólio - Vendido', () => {
+describe('Calculos Portifólio - Vendido', () => {
   test('Verifica venda Comum - Primeira', async () => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0, 10)
@@ -253,7 +253,7 @@ describe.skip('Calculos Portifólio - Vendido', () => {
     })
   })
 })
-describe.skip('Calculos Portifólio - Comprado vs Vendido', () => {
+describe('Calculos Portifólio - Comprado vs Vendido', () => {
   test('Verifica compra Comum - Primeira', async () => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0, 19)
@@ -307,7 +307,7 @@ describe.skip('Calculos Portifólio - Comprado vs Vendido', () => {
   })
 })
 
-describe.skip('Comprado - Operação e Resultado', () => {
+describe('Comprado - Operação e Resultado', () => {
   const wrapper = mount(mixins)
   test('Verifica compra Comum - Primeira', async () => {
     const operacoes = db.operacoes.slice(0, 1)
@@ -384,7 +384,7 @@ describe.skip('Comprado - Operação e Resultado', () => {
   })
 })
 
-describe.skip('Vendido - Operação e Resultado', () => {
+describe('Vendido - Operação e Resultado', () => {
   const wrapper = mount(mixins)
   test('Verifica venda Comum - Primeira', async () => {
     const operacoes = db.operacoes.slice(0, 10)

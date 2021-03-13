@@ -36,6 +36,11 @@ export default class CRUD {
     return await this._wrapRequest(transaction.add(data))
   }
 
+  async put(data, key){
+    const transaction = this._transaction("readwrite")
+    return await this._wrapRequest(transaction.put(data, key))
+  }
+
   async remove(keyPath) {
     const transaction = this._transaction("readwrite")
     return this._wrapRequest(transaction.delete(keyPath))
