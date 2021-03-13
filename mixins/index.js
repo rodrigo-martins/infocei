@@ -79,27 +79,59 @@ export default {
         ultima_data_negocio = new Date(ultima_data_negocio).getTime()
         let data_negocio = new Date(operacao.data_negocio).getTime()
 
-        if(data_negocio == ultima_data_negocio){
-          if(portifolio.quantidade > 0 && operacao.compra_venda == "C"){
+        if (data_negocio == ultima_data_negocio) {
+          if (portifolio.quantidade == 0) {
+            _operacao = "Comum"
+            if (operacao.compra_venda == "C") _lucro_prejuizo = 0
+            else _lucro_prejuizo = operacao.valor_total
+          } else if (portifolio.quantidade > 0 && operacao.compra_venda == "C") {
             _operacao = "Comum"
             _lucro_prejuizo = 0
-          }else if (portifolio.quantidade > 0 && operacao.compra_venda == "V" ){
+          } else if (portifolio.quantidade > 0 && operacao.compra_venda == "V") {
             _operacao = "Day-Trade",
-            _lucro_prejuizo = operacao.valor_total - portifolio.preco * operacao.quantidade
+              _lucro_prejuizo = operacao.valor_total - portifolio.preco * operacao.quantidade
+            //Comprado para vendido
+            if (portifolio.quantidade < operacao.quantidade) {
+              _lucro_prejuizo = operacao.valor_total - portifolio.quantidade * portifolio.preco
+            }
+          } else if (portifolio.quantidade < 0 && operacao.compra_venda == "V") {
+            _operacao = "Comum",
+              _lucro_prejuizo = operacao.valor_total
+          } else if (portifolio.quantidade < 0 && operacao.compra_venda == "C") {
+            _operacao = "Day-Trade",
+              _lucro_prejuizo = portifolio.preco * operacao.quantidade - operacao.valor_total
+            //Vendido para comprado
+            if (Math.abs(portifolio.quantidade) < operacao.quantidade) {
+              _lucro_prejuizo = Math.abs(portifolio.quantidade) * (portifolio.preco - operacao.preco)
+            }
           }
-        }else{
-          if(portifolio.quantidade > 0 && operacao.compra_venda == "C"){
-            _operacao = "Comum"
+        } else {
+          _operacao = "Comum"
+          if (portifolio.quantidade == 0) {
+            if (operacao.compra_venda == "C") _lucro_prejuizo = 0
+            else _lucro_prejuizo = operacao.valor_total
+          } else if (portifolio.quantidade > 0 && operacao.compra_venda == "C") {
             _lucro_prejuizo = 0
-          }else if(portifolio.quantidade > 0 && operacao.compra_venda == "V"){
-            _operacao = "Comum"
+          } else if (portifolio.quantidade > 0 && operacao.compra_venda == "V") {
             _lucro_prejuizo = operacao.valor_total - portifolio.preco * operacao.quantidade
+            //Comprado para vendido
+            if (portifolio.quantidade < operacao.quantidade) {
+              _lucro_prejuizo = operacao.valor_total - portifolio.quantidade * portifolio.preco
+            }
+          } else if (portifolio.quantidade < 0 && operacao.compra_venda == "V") {
+            _lucro_prejuizo = operacao.valor_total
+          } else if (portifolio.quantidade < 0 && operacao.compra_venda == "C") {
+            _lucro_prejuizo = portifolio.preco * operacao.quantidade - operacao.valor_total
+            //Vendido para comprado
+            if (Math.abs(portifolio.quantidade) < operacao.quantidade) {
+              _lucro_prejuizo = portifolio.quantidade * (portifolio.preco - operacao.preco)
+            }
           }
         }
 
         return {
           operacao: _operacao,
-          lucro_prejuizo: _lucro_prejuizo
+          lucro_prejuizo: _lucro_prejuizo != 0 ? _lucro_prejuizo : 0
         }
       }
 
