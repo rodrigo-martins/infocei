@@ -588,7 +588,7 @@ describe('Ordenação', () => {
       lucro_prejuizo: 0
     })
   })
-  test('Verifica compra Comum - Insere duas operacao entre datas ', async () => {
+  test('Verifica compra Comum - Insere duas operacao entre datas - Zera posição ', async () => {
     const operacoes = db.operacoes.slice(0, 30)
     const calculos = await wrapper.vm.calculos(operacoes)
     expect(calculos).toHaveProperty("KLBN11")

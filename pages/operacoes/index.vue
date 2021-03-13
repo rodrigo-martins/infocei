@@ -304,7 +304,12 @@ export default {
         preco: 0,
         valor_total: 0,
       },
-      mercado: ["Mercado a Vista", "Opção de Venda", "Opção de Compra"],
+      mercado: [
+        "Mercado a Vista",
+        "Merc. Fracionário",
+        "Opção de Venda",
+        "Opção de Compra",
+      ],
       filter: null,
       filterOn: [],
     };
