@@ -145,7 +145,7 @@
       <b-col>
         <h3>
           Operações
-          <b-button @click="openOperacao()">
+          <b-button @click="openOperacao()" size="sm">
             <b-icon-plus></b-icon-plus>
           </b-button>
         </h3>
@@ -175,12 +175,6 @@
               type="search"
               placeholder="Buscar"
             ></b-form-input>
-
-            <b-input-group-append>
-              <b-button :disabled="!filter" @click="filter = ''">
-                <b-icon-x></b-icon-x>
-              </b-button>
-            </b-input-group-append>
           </b-input-group>
         </b-form-group>
       </b-col>
@@ -192,6 +186,8 @@
           :items="operacoes.items"
           :filter="filter"
           :filter-included-fields="filterOn"
+          sort-by="data_negocio"
+          sort-desc="Descending"
           head-variant="light"
           responsive="sm"
           small
@@ -217,6 +213,13 @@
           <template #cell(lucro_prejuizo)="data">
             <p class="text-right">
               {{ data.value | currency }}
+              <b-badge
+                v-if="data.item.operacao == 'Day-Trade'"
+                v-b-tooltip.hover
+                title="Day-Trade"
+                >D</b-badge
+              >
+              <b-badge v-else v-b-tooltip.hover title="Comum">C</b-badge>
             </p>
           </template>
           <template #cell(actions)="row">
@@ -247,24 +250,39 @@ export default {
       operacoes: {
         fields: [
           { key: "key", label: "ID" },
-          { key: "data_negocio", label: "Data Negócio" },
-          { key: "compra_venda", label: "C/V", class: "text-center" },
-          { key: "mercado", label: "Mercado" },
-          { key: "prazo", label: "Prazo" },
-          { key: "codigo", label: "Código" },
-          { key: "especificacao_do_ativo", label: "Especificação do Ativo" },
-          { key: "quantidade", label: "Quantidade", class: "text-center" },
-          { key: "preco", label: "Preço (R$)", class: "text-center" },
+          {
+            key: "data_negocio",
+            label: "Data Negócio",
+            class: "text-center",
+            sortable: true,
+          },
+          { key: "compra_venda", label: "C/V", class: "text-center", sortable: true },
+          { key: "mercado", label: "Mercado", sortable: true },
+          { key: "prazo", label: "Prazo", sortable: true },
+          { key: "codigo", label: "Código", sortable: true },
+          {
+            key: "especificacao_do_ativo",
+            label: "Especificação do Ativo",
+            sortable: true,
+          },
+          {
+            key: "quantidade",
+            label: "Qtd",
+            class: "text-center",
+            sortable: true,
+          },
+          { key: "preco", label: "Preço (R$)", class: "text-center", sortable: true },
           {
             key: "valor_total",
             label: "Valor Total (R$)",
             class: "text-center",
+            sortable: true,
           },
-          { key: "operacao", label: "Operação", class: "text-center" },
           {
             key: "lucro_prejuizo",
             label: "Lucro/Prejuízo",
             class: "text-center",
+            sortable: true,
           },
           {
             key: "actions",
@@ -286,7 +304,12 @@ export default {
         preco: 0,
         valor_total: 0,
       },
-      mercado: ["Mercado a Vista", "Opção de Venda", "Opção de Compra"],
+      mercado: [
+        "Mercado a Vista",
+        "Merc. Fracionário",
+        "Opção de Venda",
+        "Opção de Compra",
+      ],
       filter: null,
       filterOn: [],
     };

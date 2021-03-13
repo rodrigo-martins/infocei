@@ -545,5 +545,62 @@ describe('Operação e Resultado - Comprado vs Vendido', () => {
       lucro_prejuizo: 50
     })
   })
+  test('Verifica venda Comum - Zera posição', async () => {
+    const operacoes = db.operacoes.slice(0, 27)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos["KLBN11"]).toHaveProperty("operacoes")
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("27", {
+      operacao: "Comum",
+      lucro_prejuizo: 0
+    })
+  })
 })
 
+describe('Ordenação', () => {
+  const wrapper = mount(mixins)
+  test('Verifica venda Comum - Dois dias ', async () => {
+    const operacoes = db.operacoes.slice(0, 28)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos).toHaveProperty("KLBN11")
+    expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
+      quantidade: -200,
+      preco: 1,
+      lucro_prejuizo: 200
+    })
+    expect(calculos["KLBN11"]).toHaveProperty("operacoes")
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("28", {
+      operacao: "Comum",
+      lucro_prejuizo: 200
+    })
+  })
+  test('Verifica compra Comum - Insere uma operacao entre datas ', async () => {
+    const operacoes = db.operacoes.slice(0, 29)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos).toHaveProperty("KLBN11")
+    expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
+      quantidade: -100,
+      preco: 1,
+      lucro_prejuizo: 100
+    })
+    expect(calculos["KLBN11"]).toHaveProperty("operacoes")
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("29", {
+      operacao: "Comum",
+      lucro_prejuizo: 0
+    })
+  })
+  test('Verifica compra Comum - Insere duas operacao entre datas - Zera posição ', async () => {
+    const operacoes = db.operacoes.slice(0, 30)
+    const calculos = await wrapper.vm.calculos(operacoes)
+    expect(calculos).toHaveProperty("KLBN11")
+    expect(calculos["KLBN11"]).toHaveProperty("portifolio", {
+      quantidade: 0,
+      preco: 0,
+      lucro_prejuizo: 50
+    })
+    expect(calculos["KLBN11"]).toHaveProperty("operacoes")
+    expect(calculos["KLBN11"].operacoes).toHaveProperty("30", {
+      operacao: "Comum",
+      lucro_prejuizo: 50
+    })
+  })
+})

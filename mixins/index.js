@@ -1,3 +1,4 @@
+import _ from "lodash"
 export default {
   data() {
     return {
@@ -7,6 +8,7 @@ export default {
   methods: {
     calculos(operacoes) {
       let result = {};
+      operacoes = _.orderBy(operacoes, ['data_negociacao'],['asc'])
 
       function fnPortifolio(portifolio, operacao) {
 
