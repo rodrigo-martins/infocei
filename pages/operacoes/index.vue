@@ -165,15 +165,38 @@
         </div>
       </b-col>
     </b-row>
+    <b-row class="justify-content-center">
+      <b-col cols="4" class="mb-4">
+        <b-form-group label-size="sm">
+          <b-input-group>
+            <b-form-input
+              id="filter-input"
+              v-model="filter"
+              type="search"
+              placeholder="Buscar"
+            ></b-form-input>
+
+            <b-input-group-append>
+              <b-button :disabled="!filter" @click="filter = ''">
+                <b-icon-x></b-icon-x>
+              </b-button>
+            </b-input-group-append>
+          </b-input-group>
+        </b-form-group>
+      </b-col>
+    </b-row>
     <b-row>
       <b-col>
         <b-table
           :fields="operacoes.fields"
           :items="operacoes.items"
+          :filter="filter"
+          :filter-included-fields="filterOn"
           head-variant="light"
           responsive="sm"
           small
           hover
+          show-empty
         >
           <template #cell(data_negocio)="data">
             {{ data.value | momentFormat("DD/MM/YYYY") }}
@@ -264,6 +287,8 @@ export default {
         valor_total: 0,
       },
       mercado: ["Mercado a Vista", "Opção de Venda", "Opção de Compra"],
+      filter: null,
+      filterOn: [],
     };
   },
   computed: {
@@ -294,13 +319,14 @@ export default {
       this.operacoes.items = this.addCalculos(operacoes);
     },
     async putOperacao() {
-      if (this.operacao.key) {
-        let key = this.operacao.key;
-        let operacao = { ...this.operacao };
+      let operacao = { ...this.operacao };
+      operacao.preco = Number(operacao.preco);
+      operacao.quantidade = Number(operacao.quantidade);
+      if (operacao.key) {
+        let key = operacao.key;
         delete operacao.key;
         await this.$db.operacoes.put(operacao, key);
       } else {
-        let operacao = { ...this.operacao };
         delete operacao.key;
         await this.$db.operacoes.put(operacao);
       }
@@ -340,10 +366,8 @@ export default {
     copyOperacao(operacao) {
       operacao = { ...operacao };
       delete operacao.key;
-      delete operacao.operacao;
-      delete operacao.lucro_prejuizo;
       this.operacao = operacao;
-      this.putOperacao();
+      this.$bvModal.show("operacao");
     },
   },
   async mounted() {
