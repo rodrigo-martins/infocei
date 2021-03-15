@@ -1,8 +1,7 @@
 import XLSX from 'xlsx'
-export default async (context, inject) => {
-  function previewFile(e) {
+export default async (_context, inject) => {
+  function previewFile(file) {
     return new Promise((resolve, _reject)=>{
-      var files = e.target.files, f = files[0];
       var reader = new FileReader();
       reader.onload = function (e) {
         var data = new Uint8Array(e.target.result);
@@ -16,7 +15,7 @@ export default async (context, inject) => {
           )
         )
       };
-      reader.readAsArrayBuffer(f);
+      reader.readAsArrayBuffer(file);
     })
   }
 
