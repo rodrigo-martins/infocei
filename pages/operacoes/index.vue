@@ -1,5 +1,18 @@
 <template>
   <b-container fluid>
+    {{ infocei }}
+    <b-modal id="uploadInfoCEI" title="Upload InfoCEI" @ok="uploadInfoCEI()">
+      <b-row>
+        <b-col>
+          <b-form-file
+            v-model="infocei"
+            :state="Boolean(infocei)"
+            placeholder="Selecione seu arquivo InfoCEI.xls"
+            drop-placeholder="Arraste o arquivo aqui..."
+          ></b-form-file>
+        </b-col>
+      </b-row>
+    </b-modal>
     <b-modal id="operacao" title="Operação" @ok="putOperacao">
       <div class="my-4">
         <b-row class="my-3">
@@ -150,44 +163,69 @@
           </b-button>
         </h3>
       </b-col>
-      <b-col cols="4">
-        <div class="input-group">
-          <div class="custom-file">
-            <input
-              type="file"
-              @change="onChange"
-              id="upload"
-              placeholder="Upload"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-            />
-            <label class="custom-file-label" for="upload">Upload InfoCEI</label>
-          </div>
-        </div>
-      </b-col>
     </b-row>
-    <b-row class="justify-content-center">
-      <b-col cols="4" class="mb-4">
-        <b-form-group label-size="sm">
-          <b-input-group>
-            <b-form-input
-              id="filter-input"
-              v-model="filter"
-              type="search"
-              placeholder="Buscar"
-            ></b-form-input>
-          </b-input-group>
+    <b-row>
+      <b-col cols="2">
+        <b-form-group id="data_inicial" label="Data Inicial" label-for="data_inicial">
+          <b-form-input
+            id="data_inicial"
+            v-model="data_inicial"
+            type="date"
+            placeholder="Data Inicial"
+          ></b-form-input>
+        </b-form-group>
+      </b-col>
+      <b-col cols="2">
+        <b-form-group
+          id="data_final"
+          label="Data
+        Final"
+          label-for="data_final"
+        >
+          <b-form-input
+            id="data_final"
+            v-model="data_final"
+            type="date"
+            placeholder="Data Final"
+          ></b-form-input>
+        </b-form-group>
+      </b-col>
+      <b-col cols="4">
+        <b-form-group id="pesquisa" label="Pesquisa" label-for="pesquisa">
+          <b-form-input
+            id="pesquisa"
+            v-model="filter"
+            type="search"
+            placeholder="Pesquisa"
+          ></b-form-input>
+        </b-form-group>
+      </b-col>
+      <b-col class="text-right">
+        <b-form-group label=".">
+          <b-button-group>
+            <b-button v-b-modal.uploadInfoCEI>
+              <b-icon-upload></b-icon-upload>
+              CEI
+            </b-button>
+            <!-- <b-button disabled>
+              <b-icon-upload></b-icon-upload>
+              JSON
+            </b-button>
+            <b-button disabled>
+              <b-icon-download></b-icon-download>
+              JSON
+            </b-button> -->
+          </b-button-group>
         </b-form-group>
       </b-col>
     </b-row>
-    <b-row>
+    <b-row class="my-4">
       <b-col>
         <b-table
           :fields="operacoes.fields"
           :items="operacoes.items"
           :filter="filter"
           :filter-included-fields="filterOn"
-          sort-by="data_negocio"
-          sort-desc="Descending"
           head-variant="light"
           responsive="sm"
           small
@@ -312,6 +350,9 @@ export default {
       ],
       filter: null,
       filterOn: [],
+      data_inicial: null,
+      data_final: null,
+      infocei: null,
     };
   },
   computed: {
@@ -333,13 +374,12 @@ export default {
         return operacao;
       });
     },
-    async onChange(e) {
-      let json = await this.$xlsx.cei_json(e);
+    async uploadInfoCEI() {
+      let json = await this.$xlsx.cei_json(this.infocei);
       for (let i in json) {
         this.$db.operacoes.add(json[i]);
       }
-      let operacoes = await this.$db.operacoes.getAll();
-      this.operacoes.items = this.addCalculos(operacoes);
+      this.setItems();
     },
     async putOperacao() {
       let operacao = { ...this.operacao };
@@ -353,13 +393,11 @@ export default {
         delete operacao.key;
         await this.$db.operacoes.put(operacao);
       }
-      let operacoes = await this.$db.operacoes.getAll();
-      this.operacoes.items = this.addCalculos(operacoes);
+      this.setItems();
     },
     async removeOperacao(operacao) {
       await this.$db.operacoes.remove(operacao.key);
-      let operacoes = await this.$db.operacoes.getAll();
-      this.operacoes.items = this.addCalculos(operacoes);
+      this.setItems();
     },
     emptyOperacao() {
       this.operacao = {
@@ -392,10 +430,15 @@ export default {
       this.operacao = operacao;
       this.$bvModal.show("operacao");
     },
+    async setItems() {
+      let operacoes = await this.$db.operacoes.getAll();
+      operacoes = this.addCalculos(operacoes);
+      operacoes = _.orderBy(operacoes, ["data_negocio", "key"], ["desc", "desc"]);
+      this.operacoes.items = operacoes;
+    },
   },
   async mounted() {
-    let operacoes = await this.$db.operacoes.getAll();
-    this.operacoes.items = this.addCalculos(operacoes);
+    this.setItems();
   },
 };
 </script>
