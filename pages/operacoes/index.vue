@@ -1,6 +1,5 @@
 <template>
   <b-container fluid>
-    {{ infocei }}
     <b-modal id="uploadInfoCEI" title="Upload InfoCEI" @ok="uploadInfoCEI()">
       <b-row>
         <b-col>
@@ -29,6 +28,7 @@
                 month: '2-digit',
                 day: '2-digit',
               }"
+              reset-button
             ></b-form-datepicker>
           </b-col>
         </b-row>
@@ -77,7 +77,7 @@
               month: '2-digit',
               day: '2-digit',
             }"
-            reset-value
+            reset-button
           ></b-form-datepicker>
         </b-col>
       </b-row>
@@ -167,30 +167,37 @@
     <b-row>
       <b-col cols="2">
         <b-form-group id="data_inicial" label="Data Inicial" label-for="data_inicial">
-          <b-form-input
+          <b-form-datepicker
             id="data_inicial"
             v-model="data_inicial"
-            type="date"
-            placeholder="Data Inicial"
-          ></b-form-input>
+            locale="pt"
+            :date-format-options="{
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }"
+            placeholder=""
+            reset-button
+          ></b-form-datepicker>
         </b-form-group>
       </b-col>
       <b-col cols="2">
-        <b-form-group
-          id="data_final"
-          label="Data
-        Final"
-          label-for="data_final"
-        >
-          <b-form-input
+        <b-form-group id="data_final" label="Data Final" label-for="data_final">
+          <b-form-datepicker
             id="data_final"
             v-model="data_final"
-            type="date"
-            placeholder="Data Final"
-          ></b-form-input>
+            locale="pt"
+            :date-format-options="{
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            }"
+            placeholder=""
+            reset-button
+          ></b-form-datepicker>
         </b-form-group>
       </b-col>
-      <b-col cols="4">
+      <b-col cols="3">
         <b-form-group id="pesquisa" label="Pesquisa" label-for="pesquisa">
           <b-form-input
             id="pesquisa"
@@ -199,6 +206,27 @@
             placeholder="Pesquisa"
           ></b-form-input>
         </b-form-group>
+      </b-col>
+      <b-col>
+        <b-row>
+          <b-col>
+            <p>Resultados</p>
+          </b-col>
+        </b-row>
+        <b-row>
+          <b-col class="text-right">
+            <p>
+              {{ resultados.comum | currency }}
+              <b-badge v-b-tooltip.hover title="Comum">C</b-badge>
+            </p>
+          </b-col>
+          <b-col class="text-right">
+            <p>
+              {{ resultados.day_trade | currency }}
+              <b-badge v-b-tooltip.hover title="Day-Trade">D</b-badge>
+            </p>
+          </b-col>
+        </b-row>
       </b-col>
       <b-col class="text-right">
         <b-form-group label=".">
@@ -226,6 +254,7 @@
           :items="operacoes.items"
           :filter="filter"
           :filter-included-fields="filterOn"
+          :filter-debounce="400"
           head-variant="light"
           responsive="sm"
           small
@@ -280,6 +309,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import index from "@/mixins/index";
 export default {
   mixins: [index],
@@ -290,17 +320,27 @@ export default {
           { key: "key", label: "ID" },
           {
             key: "data_negocio",
-            label: "Data Negócio",
+            label: "Data",
             class: "text-center",
             sortable: true,
           },
-          { key: "compra_venda", label: "C/V", class: "text-center", sortable: true },
+          {
+            key: "compra_venda",
+            label: "C/V",
+            class: "text-center",
+            sortable: true,
+          },
           { key: "mercado", label: "Mercado", sortable: true },
-          { key: "prazo", label: "Prazo", sortable: true },
+          {
+            key: "prazo",
+            label: "Prazo",
+            class: "text-center",
+            sortable: true,
+          },
           { key: "codigo", label: "Código", sortable: true },
           {
             key: "especificacao_do_ativo",
-            label: "Especificação do Ativo",
+            label: "Especificação",
             sortable: true,
           },
           {
@@ -309,10 +349,15 @@ export default {
             class: "text-center",
             sortable: true,
           },
-          { key: "preco", label: "Preço (R$)", class: "text-center", sortable: true },
+          {
+            key: "preco",
+            label: "Preço",
+            class: "text-center",
+            sortable: true,
+          },
           {
             key: "valor_total",
-            label: "Valor Total (R$)",
+            label: "Total",
             class: "text-center",
             sortable: true,
           },
@@ -332,7 +377,7 @@ export default {
       },
       operacao: {
         key: null,
-        data_negocio: new Date(),
+        data_negocio: moment(),
         compra_venda: "C",
         mercado: "",
         prazo: "",
@@ -362,6 +407,17 @@ export default {
         ..._operacao,
         valor_total: this.operacao.quantidade * this.operacao.preco,
       };
+    },
+    resultados() {
+      let resultado = {
+        comum: 0,
+        day_trade: 0,
+      };
+      this.operacoes.items.forEach((o) => {
+        if (o.operacao == "Comum") resultado.comum += o.lucro_prejuizo;
+        else resultado.day_trade += o.lucro_prejuizo;
+      });
+      return resultado;
     },
   },
   methods: {
@@ -402,7 +458,7 @@ export default {
     emptyOperacao() {
       this.operacao = {
         key: null,
-        data_negocio: new Date(),
+        data_negocio: moment(),
         compra_venda: "C",
         mercado: "",
         prazo: "",
@@ -430,11 +486,32 @@ export default {
       this.operacao = operacao;
       this.$bvModal.show("operacao");
     },
+    filterByDate(operacoes) {
+      let data_inicial = this.data_inicial ? this.data_inicial : "1900-01-01";
+      let data_final = this.data_final ? this.data_final : undefined;
+      return operacoes.filter((o) => {
+        return moment(o.data_negocio).isBetween(
+          data_inicial,
+          data_final,
+          undefined,
+          "[]"
+        );
+      });
+    },
     async setItems() {
       let operacoes = await this.$db.operacoes.getAll();
       operacoes = this.addCalculos(operacoes);
+      operacoes = this.filterByDate(operacoes);
       operacoes = _.orderBy(operacoes, ["data_negocio", "key"], ["desc", "desc"]);
       this.operacoes.items = operacoes;
+    },
+  },
+  watch: {
+    data_inicial() {
+      this.setItems();
+    },
+    data_final() {
+      this.setItems();
     },
   },
   async mounted() {
