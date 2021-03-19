@@ -1,4 +1,5 @@
-import _ from "lodash"
+import _, { result } from "lodash"
+import moment from "moment";
 export default {
   data() {
     return {
@@ -8,7 +9,7 @@ export default {
   methods: {
     calculos(operacoes) {
       let result = {};
-      operacoes = _.orderBy(operacoes, ['data_negociacao'],['asc'])
+      operacoes = _.orderBy(operacoes, ['data_negociacao'], ['asc'])
 
       function fnPortifolio(portifolio, operacao) {
 
@@ -183,5 +184,208 @@ export default {
         .filter((p) => p.quantidade);
       this.portifolio = portifolio;
     },
-  }
+    alicota_do_imposto() {
+      return {
+        comuns: 15,
+        day_trade: 20,
+      }
+    },
+    resultados_default() {
+      return {
+        mercado_a_vista: [
+          {
+            mercado: "Mercado à vista - ações",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado à vista - ouro",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado à vista - ouro at. fin. fora bolsa",
+            comuns: 0,
+            day_trade: 0,
+          },
+        ],
+        mercado_opcoes: [
+          {
+            mercado: "Mercado Opções - ações",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado Opções - ouro",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado Opções - fora de bolsa",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado Opções - outros",
+            comuns: 0,
+            day_trade: 0,
+          }
+        ],
+        mercado_futuro: [
+          {
+            mercado: "Mercado futuro - dólar dos EUA",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado futuro - indices",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado futuro - juros",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado futuro - outros",
+            comuns: 0,
+            day_trade: 0,
+          },
+        ],
+        mercado_a_termo: [
+          {
+            mercado: "Mercado a termo - ações/ouro",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Mercado a termo - outros",
+            comuns: 0,
+            day_trade: 0,
+          },
+        ],
+        resultados: [
+          {
+            mercado: "RESULTADO LÍQUIDO DO MÊS",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Resultado negativo até o mês anterior",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "BASE DE CÁLCULO DO IMPOSTO",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Prejuízo a compensar",
+            comuns: 0,
+            day_trade: 0,
+          },
+          {
+            mercado: "Alíquota do imposto",
+            comuns: this.alicota_do_imposto().comuns,
+            day_trade: this.alicota_do_imposto().day_trade,
+          },
+          {
+            mercado: "IMPOSTO DEVIDO",
+            comuns: 0,
+            day_trade: 0,
+          },
+        ]
+      }
+    },
+    meses(operacoes) {
+      if (operacoes.length) {
+        let meses = {};
+        let dezembro_ano_corrente = moment.utc().endOf("year").startOf("month")
+        let data_inicial = operacoes[0].data_negocio
+        data_inicial = moment.utc(data_inicial).startOf("month")
+        do {
+          meses[data_inicial.format("YYYY-MM")] = this.resultados_default();
+          data_inicial.add(1, "M");
+        } while (data_inicial.isSameOrBefore(dezembro_ano_corrente))
+        return meses
+      }
+      return {}
+    },
+    inicio_prejuizos() {
+      return {
+        comuns: 0,
+        day_trade: 0
+      }
+    },
+
+    resultados(operacoes) {
+      let calculos = this.calculos(operacoes)
+      let resultados = this.meses(operacoes)
+      let alicota_do_imposto = this.alicota_do_imposto()
+      let mercado_a_vista = ["Mercado a Vista", "Merc. Fracionário"]
+      let mercado_opcoes = ["Opção de Venda", "Opção de Compra"]
+      operacoes.forEach(operacao => {
+        let mes = moment.utc(operacao.data_negocio).format("YYYY-MM")
+        let mes_anterior = moment.utc(operacao.data_negocio).subtract(1, "M").format("YYYY-MM")
+        let _operacao = calculos[operacao.codigo].operacoes[operacao.key].operacao
+        let _lucro_prejuizo = calculos[operacao.codigo].operacoes[operacao.key].lucro_prejuizo
+
+        //"RESULTADO LÍQUIDO DO MÊS",
+        if (mercado_a_vista.includes(operacao.mercado)) {
+          if (_operacao == "Comum") {
+            resultados[mes].mercado_a_vista[0].comuns += _lucro_prejuizo
+            resultados[mes].resultados[0].comuns += _lucro_prejuizo
+          } else {
+            resultados[mes].mercado_a_vista[0].day_trade += _lucro_prejuizo
+            resultados[mes].resultados[0].day_trade += _lucro_prejuizo
+          }
+        } else if (mercado_opcoes.includes(operacao.mercado)) {
+          if (_operacao == "Comum") {
+            resultados[mes].mercado_opcoes[0].comuns += _lucro_prejuizo
+            resultados[mes].resultados[0].comuns += _lucro_prejuizo
+          } else {
+            resultados[mes].mercado_opcoes[0].day_trade += _lucro_prejuizo
+            resultados[mes].resultados[0].day_trade += _lucro_prejuizo
+          }
+        }
+
+        // "Resultado negativo até o mês anterior",
+        if (resultados[mes_anterior]) {
+          resultados[mes].resultados[1].comuns = Math.abs(resultados[mes_anterior].resultados[3].comuns)
+          resultados[mes].resultados[1].day_trade = Math.abs(resultados[mes_anterior].resultados[3].day_trade)
+        } else {
+          let inicio_prejuizos = this.inicio_prejuizos()
+          resultados[mes].resultados[1].comuns = Math.abs(inicio_prejuizos.comuns)
+          resultados[mes].resultados[1].day_trade = Math.abs(inicio_prejuizos.day_trade)
+        }
+
+        // "BASE DE CÁLCULO DO IMPOSTO",
+        resultados[mes].resultados[2].comuns = resultados[mes].resultados[0].comuns - resultados[mes].resultados[1].comuns < 0
+          ? 0
+          : resultados[mes].resultados[0].comuns - resultados[mes].resultados[1].comuns
+        resultados[mes].resultados[2].day_trade = resultados[mes].resultados[0].day_trade - resultados[mes].resultados[1].day_trade < 0
+          ? 0
+          : resultados[mes].resultados[0].day_trade - resultados[mes].resultados[1].day_trade
+
+        // "Prejuízo a compensar",
+        resultados[mes].resultados[3].comuns = resultados[mes].resultados[1].comuns - resultados[mes].resultados[0].comuns < 0
+          ? 0
+          : resultados[mes].resultados[1].comuns - resultados[mes].resultados[0].comuns
+        resultados[mes].resultados[3].day_trade = resultados[mes].resultados[1].day_trade - resultados[mes].resultados[0].day_trade < 0
+          ? 0
+          : resultados[mes].resultados[1].day_trade - resultados[mes].resultados[0].day_trade
+
+        // "Alíquota do imposto",
+        resultados[mes].resultados[4].comuns = alicota_do_imposto.comuns
+        resultados[mes].resultados[4].day_trade = alicota_do_imposto.day_trade
+
+        // "IMPOSTO DEVIDO",
+        resultados[mes].resultados[5].comuns = resultados[mes].resultados[2].comuns * resultados[mes].resultados[4].comuns / 100
+        resultados[mes].resultados[5].day_trade = resultados[mes].resultados[2].day_trade * resultados[mes].resultados[4].day_trade / 100
+      })
+      return resultados
+    }
+  },
 };

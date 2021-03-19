@@ -2,7 +2,7 @@ import { mount } from '@vue/test-utils'
 import mixins from '@/pages/tests/mixins.vue'
 import db from '@/mock/db'
 
-describe('Calculos Portifólio - Comprado', () => {
+describe.skip('Calculos Portifólio - Comprado', () => {
   test('Vue instance', () => {
     const wrapper = mount(mixins)
     expect(wrapper.vm).toBeTruthy()
@@ -146,7 +146,7 @@ describe('Calculos Portifólio - Comprado', () => {
   })
 })
 
-describe('Calculos Portifólio - Vendido', () => {
+describe.skip('Calculos Portifólio - Vendido', () => {
   test('Verifica venda Comum - Primeira', async () => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0, 10)
@@ -253,7 +253,7 @@ describe('Calculos Portifólio - Vendido', () => {
     })
   })
 })
-describe('Calculos Portifólio - Comprado vs Vendido', () => {
+describe.skip('Calculos Portifólio - Comprado vs Vendido', () => {
   test('Verifica compra Comum - Primeira', async () => {
     const wrapper = mount(mixins)
     const operacoes = db.operacoes.slice(0, 19)
@@ -307,7 +307,7 @@ describe('Calculos Portifólio - Comprado vs Vendido', () => {
   })
 })
 
-describe('Comprado - Operação e Resultado', () => {
+describe.skip('Comprado - Operação e Resultado', () => {
   const wrapper = mount(mixins)
   test('Verifica compra Comum - Primeira', async () => {
     const operacoes = db.operacoes.slice(0, 1)
@@ -384,7 +384,7 @@ describe('Comprado - Operação e Resultado', () => {
   })
 })
 
-describe('Vendido - Operação e Resultado', () => {
+describe.skip('Vendido - Operação e Resultado', () => {
   const wrapper = mount(mixins)
   test('Verifica venda Comum - Primeira', async () => {
     const operacoes = db.operacoes.slice(0, 10)
@@ -469,7 +469,7 @@ describe('Vendido - Operação e Resultado', () => {
   })
 })
 
-describe('Operação e Resultado - Comprado vs Vendido', () => {
+describe.skip('Operação e Resultado - Comprado vs Vendido', () => {
   const wrapper = mount(mixins)
   test('Verifica compra Comum', async () => {
     const operacoes = db.operacoes.slice(0, 19)
@@ -556,7 +556,7 @@ describe('Operação e Resultado - Comprado vs Vendido', () => {
   })
 })
 
-describe('Ordenação', () => {
+describe.skip('Ordenação', () => {
   const wrapper = mount(mixins)
   test('Verifica venda Comum - Dois dias ', async () => {
     const operacoes = db.operacoes.slice(0, 28)
@@ -601,6 +601,233 @@ describe('Ordenação', () => {
     expect(calculos["KLBN11"].operacoes).toHaveProperty("30", {
       operacao: "Comum",
       lucro_prejuizo: 50
+    })
+  })
+})
+
+
+describe('Resultados IRPF', () => {
+  const wrapper = mount(mixins)
+  test('Verifica primeiro mês - Ações e Opções com lucro ', async () => {
+    const operacoes = db.operacoes_resultados.slice(0, 6)
+    const resultados = await wrapper.vm.resultados(operacoes)
+    expect(resultados).toHaveProperty("2021-01", {
+      mercado_a_vista: [
+        {
+          mercado: "Mercado à vista - ações",
+          comuns: 100,
+          day_trade: 100,
+        },
+        {
+          mercado: "Mercado à vista - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado à vista - ouro at. fin. fora bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_opcoes: [
+        {
+          mercado: "Mercado Opções - ações",
+          comuns: 100,
+          day_trade: 100,
+        },
+        {
+          mercado: "Mercado Opções - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - fora de bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - outros",
+          comuns: 0,
+          day_trade: 0,
+        }
+      ],
+      mercado_futuro: [
+        {
+          mercado: "Mercado futuro - dólar dos EUA",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - indices",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - juros",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_a_termo: [
+        {
+          mercado: "Mercado a termo - ações/ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado a termo - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      resultados: [
+        {
+          mercado: "RESULTADO LÍQUIDO DO MÊS",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Resultado negativo até o mês anterior",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "BASE DE CÁLCULO DO IMPOSTO",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Prejuízo a compensar",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Alíquota do imposto",
+          comuns: 15,
+          day_trade: 20,
+        },
+        {
+          mercado: "IMPOSTO DEVIDO",
+          comuns: 30,
+          day_trade: 40,
+        },
+      ],
+    })
+  })
+  test('Verifica segundo mês - Ações e Opções com prejuízo ', async () => {
+    const operacoes = db.operacoes_resultados.slice(0, 12)
+    const resultados = await wrapper.vm.resultados(operacoes)
+    expect(resultados).toHaveProperty("2021-02", {
+      mercado_a_vista: [
+        {
+          mercado: "Mercado à vista - ações",
+          comuns: -100,
+          day_trade: -100,
+        },
+        {
+          mercado: "Mercado à vista - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado à vista - ouro at. fin. fora bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_opcoes: [
+        {
+          mercado: "Mercado Opções - ações",
+          comuns: -100,
+          day_trade: -100,
+        },
+        {
+          mercado: "Mercado Opções - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - fora de bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - outros",
+          comuns: 0,
+          day_trade: 0,
+        }
+      ],
+      mercado_futuro: [
+        {
+          mercado: "Mercado futuro - dólar dos EUA",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - indices",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - juros",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_a_termo: [
+        {
+          mercado: "Mercado a termo - ações/ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado a termo - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      resultados: [
+        {
+          mercado: "RESULTADO LÍQUIDO DO MÊS",
+          comuns: -200,
+          day_trade: -200,
+        },
+        {
+          mercado: "Resultado negativo até o mês anterior",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "BASE DE CÁLCULO DO IMPOSTO",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Prejuízo a compensar",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Alíquota do imposto",
+          comuns: 15,
+          day_trade: 20,
+        },
+        {
+          mercado: "IMPOSTO DEVIDO",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ]
     })
   })
 })

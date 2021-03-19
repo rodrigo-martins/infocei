@@ -204,6 +204,7 @@
             v-model="filter"
             type="search"
             placeholder="Pesquisa"
+            :debounce="400"
           ></b-form-input>
         </b-form-group>
       </b-col>
@@ -254,7 +255,6 @@
           :items="operacoes.items"
           :filter="filter"
           :filter-included-fields="filterOn"
-          :filter-debounce="400"
           head-variant="light"
           responsive="sm"
           small
