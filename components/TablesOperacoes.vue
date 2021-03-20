@@ -1,24 +1,37 @@
 <template>
-  <div v-if="resultado">
-    <div v-for="ano in anos" :key="ano">
-      {{ ano }}
-    </div>
-    <fieldset class="border p-2">
-      <legend class="w-auto">Tipo de Mercado/Ativo</legend>
-      <table-mercado
-        v-for="(mercado, index) in mercados"
-        :fields="mercado.fields"
-        :items="mercado.items"
-        :key="index"
-      />
-    </fieldset>
-    <fieldset class="border p-2">
-      <legend class="w-auto">Consolidação do Mês</legend>
-      <table-consolidado :fields="consolidado.fields" :items="consolidado.items" />
-    </fieldset>
-  </div>
+  <b-row v-if="resultado">
+    <b-col cols="2 mt-3">
+      <b-form-select v-model="ano" :options="anos"></b-form-select>
+      <b-button-group vertical class="mt-2 w-100">
+        <b-button
+          :class="{ active: mes == m }"
+          block
+          v-for="m in months"
+          :key="m"
+          @click="mes = m"
+          >{{ m | momentFormat("MMM") }}</b-button
+        >
+      </b-button-group>
+    </b-col>
+    <b-col>
+      <fieldset class="border p-2">
+        <legend class="w-auto">Tipo de Mercado/Ativo</legend>
+        <table-mercado
+          v-for="(mercado, index) in mercados"
+          :fields="mercado.fields"
+          :items="mercado.items"
+          :key="index"
+        />
+      </fieldset>
+      <fieldset class="border p-2">
+        <legend class="w-auto">Consolidação do Mês</legend>
+        <table-consolidado :fields="consolidado.fields" :items="consolidado.items" />
+      </fieldset>
+    </b-col>
+  </b-row>
 </template>
 <script>
+import moment from "moment";
 import index from "@/mixins/index";
 import TableConsolidado from "./TableConsolidado";
 import TableMercado from "./TableMercado.vue";
@@ -33,6 +46,14 @@ export default {
     TableMercado,
   },
   computed: {
+    months() {
+      let ano = moment(this.ano);
+      let resultado = [ano.format("YYYY-MM")];
+      for (let i = 1; i < 12; i++) {
+        resultado.push(ano.add(1, "M").format("YYYY-MM"));
+      }
+      return resultado;
+    },
     mercados() {
       if (!this.resultado) return [];
       return [
@@ -89,7 +110,8 @@ export default {
   },
   data() {
     return {
-      mes: "2021-01",
+      mes: moment().format("YYYY-MM"),
+      ano: moment().format("YYYY"),
       resultado: null,
       consolidado: {
         fields: [
