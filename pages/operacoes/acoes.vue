@@ -15,7 +15,6 @@
         <TablesOperacoes />
       </b-col>
     </b-row>
-    <b-tabs pills card vertical> </b-tabs>
   </b-container>
 </template>
 <script>

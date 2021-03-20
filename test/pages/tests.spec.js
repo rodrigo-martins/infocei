@@ -830,4 +830,115 @@ describe('Resultados IRPF', () => {
       ]
     })
   })
+  test('Verifica quarto mês - Ações e Opções com lucro (carrega prejuizos de fev)', async () => {
+    const operacoes = db.operacoes_resultados.slice(0, 18)
+    const resultados = await wrapper.vm.resultados(operacoes)
+    expect(resultados).toHaveProperty("2021-04", {
+      mercado_a_vista: [
+        {
+          mercado: "Mercado à vista - ações",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Mercado à vista - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado à vista - ouro at. fin. fora bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_opcoes: [
+        {
+          mercado: "Mercado Opções - ações",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Mercado Opções - ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - fora de bolsa",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado Opções - outros",
+          comuns: 0,
+          day_trade: 0,
+        }
+      ],
+      mercado_futuro: [
+        {
+          mercado: "Mercado futuro - dólar dos EUA",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - indices",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - juros",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado futuro - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      mercado_a_termo: [
+        {
+          mercado: "Mercado a termo - ações/ouro",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Mercado a termo - outros",
+          comuns: 0,
+          day_trade: 0,
+        },
+      ],
+      resultados: [
+        {
+          mercado: "RESULTADO LÍQUIDO DO MÊS",
+          comuns: 400,
+          day_trade: 400,
+        },
+        {
+          mercado: "Resultado negativo até o mês anterior",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "BASE DE CÁLCULO DO IMPOSTO",
+          comuns: 200,
+          day_trade: 200,
+        },
+        {
+          mercado: "Prejuízo a compensar",
+          comuns: 0,
+          day_trade: 0,
+        },
+        {
+          mercado: "Alíquota do imposto",
+          comuns: 15,
+          day_trade: 20,
+        },
+        {
+          mercado: "IMPOSTO DEVIDO",
+          comuns: 30,
+          day_trade: 40,
+        },
+      ]
+    })
+  })
 })

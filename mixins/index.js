@@ -164,8 +164,6 @@ export default {
         );
 
         result[operacao.codigo].ultima_data_negocio = operacao.data_negocio
-
-        // result[operacao.codigo].portifolio_do_dia = _portifolio_do_dia;
       });
       return result;
     },
@@ -300,18 +298,16 @@ export default {
       }
     },
     meses(operacoes) {
-      if (operacoes.length) {
         let meses = {};
         let dezembro_ano_corrente = moment.utc().endOf("year").startOf("month")
-        let data_inicial = operacoes[0].data_negocio
-        data_inicial = moment.utc(data_inicial).startOf("month")
+        let data_inicial = operacoes.length
+          ? moment.utc(operacoes[0].data_negocio).startOf("month")
+          : moment.utc().startOf("year").startOf("month")
         do {
           meses[data_inicial.format("YYYY-MM")] = this.resultados_default();
           data_inicial.add(1, "M");
         } while (data_inicial.isSameOrBefore(dezembro_ano_corrente))
         return meses
-      }
-      return {}
     },
     inicio_prejuizos() {
       return {
@@ -319,16 +315,15 @@ export default {
         day_trade: 0
       }
     },
-
     resultados(operacoes) {
       let calculos = this.calculos(operacoes)
       let resultados = this.meses(operacoes)
+      let inicio_prejuizos = this.inicio_prejuizos()
       let alicota_do_imposto = this.alicota_do_imposto()
       let mercado_a_vista = ["Mercado a Vista", "Merc. Fracionário"]
       let mercado_opcoes = ["Opção de Venda", "Opção de Compra"]
       operacoes.forEach(operacao => {
         let mes = moment.utc(operacao.data_negocio).format("YYYY-MM")
-        let mes_anterior = moment.utc(operacao.data_negocio).subtract(1, "M").format("YYYY-MM")
         let _operacao = calculos[operacao.codigo].operacoes[operacao.key].operacao
         let _lucro_prejuizo = calculos[operacao.codigo].operacoes[operacao.key].lucro_prejuizo
 
@@ -350,13 +345,17 @@ export default {
             resultados[mes].resultados[0].day_trade += _lucro_prejuizo
           }
         }
+      })
+
+      Object.keys(resultados).forEach(mes => {
+
+        let mes_anterior = moment.utc(mes).subtract(1, "M").format("YYYY-MM")
 
         // "Resultado negativo até o mês anterior",
         if (resultados[mes_anterior]) {
           resultados[mes].resultados[1].comuns = Math.abs(resultados[mes_anterior].resultados[3].comuns)
           resultados[mes].resultados[1].day_trade = Math.abs(resultados[mes_anterior].resultados[3].day_trade)
         } else {
-          let inicio_prejuizos = this.inicio_prejuizos()
           resultados[mes].resultados[1].comuns = Math.abs(inicio_prejuizos.comuns)
           resultados[mes].resultados[1].day_trade = Math.abs(inicio_prejuizos.day_trade)
         }
@@ -384,6 +383,7 @@ export default {
         // "IMPOSTO DEVIDO",
         resultados[mes].resultados[5].comuns = resultados[mes].resultados[2].comuns * resultados[mes].resultados[4].comuns / 100
         resultados[mes].resultados[5].day_trade = resultados[mes].resultados[2].day_trade * resultados[mes].resultados[4].day_trade / 100
+
       })
       return resultados
     }
