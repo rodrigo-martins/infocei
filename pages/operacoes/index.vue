@@ -217,13 +217,13 @@
         <b-row>
           <b-col class="text-right">
             <p>
-              {{ resultados.comum | currency }}
+              {{ resultadosOperacoes.comum | currency }}
               <b-badge v-b-tooltip.hover title="Comum">C</b-badge>
             </p>
           </b-col>
           <b-col class="text-right">
             <p>
-              {{ resultados.day_trade | currency }}
+              {{ resultadosOperacoes.day_trade | currency }}
               <b-badge v-b-tooltip.hover title="Day-Trade">D</b-badge>
             </p>
           </b-col>
@@ -408,7 +408,7 @@ export default {
         valor_total: this.operacao.quantidade * this.operacao.preco,
       };
     },
-    resultados() {
+    resultadosOperacoes() {
       let resultado = {
         comum: 0,
         day_trade: 0,

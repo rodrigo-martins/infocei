@@ -206,6 +206,16 @@ export default {
             comuns: 0,
             day_trade: 0,
           },
+          // {
+          //   mercado: "Mercado à vista - ações (vendas isentas acumuladas) ",
+          //   comuns: 0,
+          //   day_trade: 0,
+          // },
+          // {
+          //   mercado: "Mercado à vista - ações (lucro isento)",
+          //   comuns: 0,
+          //   day_trade: 0,
+          // }
         ],
         mercado_opcoes: [
           {
@@ -298,28 +308,29 @@ export default {
       }
     },
     meses(operacoes) {
-        let meses = {};
-        let dezembro_ano_corrente = moment.utc().endOf("year").startOf("month")
-        let data_inicial = operacoes.length
-          ? moment.utc(operacoes[0].data_negocio).startOf("month")
-          : moment.utc().startOf("year").startOf("month")
-        do {
-          meses[data_inicial.format("YYYY-MM")] = this.resultados_default();
-          data_inicial.add(1, "M");
-        } while (data_inicial.isSameOrBefore(dezembro_ano_corrente))
-        return meses
+      let meses = {};
+      let dezembro_ano_corrente = moment.utc().endOf("year").startOf("month")
+      let data_inicial = operacoes.length
+        ? moment.utc(operacoes[0].data_negocio).startOf("month")
+        : moment.utc().startOf("year").startOf("month")
+      do {
+        meses[data_inicial.format("YYYY-MM")] = this.resultados_default();
+        data_inicial.add(1, "M");
+      } while (data_inicial.isSameOrBefore(dezembro_ano_corrente))
+      return meses
     },
-    inicio_prejuizos() {
-      return {
-        comuns: 0,
-        day_trade: 0
-      }
+    inicio_prejuizos(configuracoes) {
+      if(!configuracoes) return { comuns: 0, day_trade:0 }
+      return configuracoes.prejuizos_acumulados
     },
-    resultados(operacoes) {
+    resultados(operacoes, configuracoes) {
+      let isencao = 20000
       let calculos = this.calculos(operacoes)
       let resultados = this.meses(operacoes)
-      let inicio_prejuizos = this.inicio_prejuizos()
+      let inicio_prejuizos = this.inicio_prejuizos(configuracoes)
       let alicota_do_imposto = this.alicota_do_imposto()
+      let etf = ["BBSD11", "XBOV11", "IVVB11", "BOVA11", "BRAX11", "ECOO11", "SMAL11", "BOVV1", "DIVO11", "FIND11", "FIXA11", "GOVE11", "IMAB11", "MATB11", "ISUS11", "PIBB11", "SPXI11"]
+      let fii = ["BCFF11"]
       let mercado_a_vista = ["Mercado a Vista", "Merc. Fracionário"]
       let mercado_opcoes = ["Opção de Venda", "Opção de Compra"]
       operacoes.forEach(operacao => {
@@ -330,6 +341,15 @@ export default {
         //"RESULTADO LÍQUIDO DO MÊS",
         if (mercado_a_vista.includes(operacao.mercado)) {
           if (_operacao == "Comum") {
+            // let acoes_com_isencao = operacao.compra_venda == "V"
+            //   && !etf.includes(operacao.codigo) && !fii.includes(operacao.codigo)
+            // resultados[mes].mercado_a_vista[3].comuns += acoes_com_isencao
+            //   ? operacao.valor_total
+            //   : 0;
+            // resultados[mes].mercado_a_vista[4].comuns += acoes_com_isencao
+            //   ? _lucro_prejuizo
+            //   : 0;
+
             resultados[mes].mercado_a_vista[0].comuns += _lucro_prejuizo
             resultados[mes].resultados[0].comuns += _lucro_prejuizo
           } else {

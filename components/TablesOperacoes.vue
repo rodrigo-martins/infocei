@@ -38,7 +38,8 @@ import TableMercado from "./TableMercado.vue";
 export default {
   async mounted() {
     let operacoes = await this.$db.operacoes.getAll();
-    this.resultado = this.resultados(operacoes);
+    let configuracoes = await this.$db.configuracoes.get(1);
+    this.resultado = this.resultados(operacoes, configuracoes);
   },
   mixins: [index],
   components: {

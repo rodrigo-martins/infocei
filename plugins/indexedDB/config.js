@@ -2,6 +2,21 @@ const name = "b3"
 const version = 1
 const objectStore = [
   {
+    name: "configuracoes",
+    options: {
+      autoIncrement: true,
+    },
+    data:[
+      {
+        isentas: 20000,
+        prejuizos_acumulados:{
+          comuns: 0,
+          day_trade: 0
+        }
+      }
+    ]
+  },
+  {
     name: "operacoes",
     options: {
       autoIncrement: true,

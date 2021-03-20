@@ -13,7 +13,6 @@
   </b-container>
 </template>
 <script>
-import moment from "moment";
 import "moment/locale/pt-br";
 import TablesOperacoes from "../../components/TablesOperacoes";
 export default {
